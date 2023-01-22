@@ -8,6 +8,23 @@ def extractLemma(lemma):
         lemma_feat = lemma['feat']
         if lemma_feat['att'] == 'writtenForm':
             word = lemma_feat['val']
+            # 단어에서 '(숫자)' 를 제거한다.
+            word = word.split('(')[0]
+
+            # 시작이나 끝이 '-' 이면 제외한다.
+            if word.startswith('-') or word.endswith('-'):
+                return None
+
+            word = word.replace('-', '')
+
+            # 빈 문자열은 제외한다.
+            if not word:
+                return None
+
+            # 시작이나 끝이 온전한 한글이 아니면 제외한다.
+            if not (0xAC00 <= ord(word[0]) <= 0xD7A3) or not (0xAC00 <= ord(word[-1]) <= 0xD7A3):
+                return None
+
             if 2 <= len(word) <= 6:
                 return word
     # lemma 가 list 인 경우
@@ -51,7 +68,16 @@ def 한국어기초사전_추출():
     # LexicalResource/Lexicon/LexicalEntry 을 json array 로 읽어온 뒤,
     # 각 json 의 Lemma/feat/att 의 값이 'writtenForm' 이고,
     # Lemma/feat/val 의 값 길이가 2~6 사이인 것만 추출하여,
-    # Sense/feat/att 의 값이 'definition' 인 json 의 Sense/feat/val 값을 가져와서 Lemma/feat/val 와 함께 출력
+    # Sense/feat/att 의 값이 'definition' 인 json 의 Sense/feat/val 값을 가져와서 Lemma/feat/val 와 함께 배열로 javascript 파일로 출력
+
+    # words.js 파일 삭제
+    if os.path.exists('script/words.js'):
+        os.remove('script/words.js')
+
+    # words.js 에 export default [ ... ] 를 쓴다.
+    with open('script/words.js', 'a', encoding='utf-8') as f:
+        f.write('export default [')
+
     path = 'script/한국어기초사전_JSON_20230112'
     files = os.listdir(path)
     for file in files:
@@ -62,7 +88,17 @@ def 한국어기초사전_추출():
                     word = extractLemma(item['Lemma'])
                     if word:
                         definition = extractSense(item['Sense'])
-                        print(word, ': ', definition)
+                        if definition:
+                            # words.js 로 출력.
+                            word = word.replace('\'', '\\\'')
+                            definition = definition.replace('\'', '\\\'')
+                            with open('script/words.js', 'a', encoding='utf-8') as f:
+                                f.write('{w: \'%s\', d: \'%s\'},' %
+                                        (word, definition))
+
+    # words.js 에 ] 를 쓴다.
+    with open('script/words.js', 'a', encoding='utf-8') as f:
+        f.write(']')
 
 
 def 우리말샘_추출():
