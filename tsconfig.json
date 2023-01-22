@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "ESNext" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
+    "module": "ESNext" /* Specify what module code is generated. */,
+    "rootDir": "./src" /* Specify the root folder within your source files. */,
+    "moduleResolution": "node" /* Specify how TypeScript looks up a file from a given module specifier. */,
+    "noEmitOnError": true /* Disable emitting files if any type checking errors are reported. */,
+    "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
+
+    "alwaysStrict": false,
+    "removeComments": true,
+    "experimentalDecorators": true,
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "outDir": "dist",
+    "declaration": false,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+
+    "jsx": "react",
+    "sourceMap": true,
+    /* strict */
+    "allowJs": true,
+    "checkJs": false,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noImplicitReturns": true
+  },
+  "include": ["src/**/*"]
+}

@@ -1,0 +1,5 @@
+### prettier ignore list ###
+/dist/**
+/public/**
+package-lock.json
+/script/**

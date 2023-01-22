@@ -1,0 +1,12 @@
+### module ###
+node_modules
+
+### type ###
+**/*.d.ts
+
+### libs ###
+**/dist/*
+**/public/*
+
+### webpack ###
+**/webpack.config.js

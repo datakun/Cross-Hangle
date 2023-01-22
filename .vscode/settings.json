@@ -1,0 +1,11 @@
+{
+  "editor.tabSize": 2,
+  "prettier.useTabs": false,
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/*.code-search": true,
+    "**/dist": true,
+    "**/package-lock.json": true
+  }
+}
