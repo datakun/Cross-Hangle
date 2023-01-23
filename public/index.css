@@ -1,0 +1,92 @@
+:root {
+  --primary-color: #0568da;
+  --paper-color: rgb(255, 255, 255);
+  --text-color: rgb(18, 18, 18);
+  --button-color: rgb(200, 200, 200);
+}
+
+[data-theme="dark"] {
+  --primary-color: #0568da;
+  --paper-color: rgb(18, 18, 18);
+  --text-color: rgb(255, 255, 255);
+  --button-color: rgb(130, 130, 130);
+}
+
+body {
+  margin: 0px;
+  height: 100vh;
+}
+
+div#root {
+  height: 100%;
+}
+
+div.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+div.keyboardContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 500px;
+  width: 100%;
+  margin: 0 auto;
+
+  margin-bottom: 4px;
+}
+
+div.keyboardRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
+div.spacer {
+  flex: .5;
+}
+
+div.keyButton {
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  height: 60px;
+  line-height: 60px;
+  margin: 3px;
+
+  text-align: center;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 1.35em;
+
+  background-color: var(--button-color);
+  color: var(--text-color);
+}
+
+div.emptyButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  height: 60px;
+  line-height: 60px;
+  margin: 3px;
+
+  text-align: center;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 1.35em;
+
+  background-color: transparent;
+}

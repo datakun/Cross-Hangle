@@ -28,5 +28,6 @@
     "strictFunctionTypes": true,
     "noImplicitReturns": true
   },
+  "files": ["types/svg.d.ts"],
   "include": ["src/**/*"]
 }
