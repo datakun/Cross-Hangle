@@ -1,17 +1,19 @@
 :root {
-  --primary-color: #0568da;
+  --primary-color: #508dd2;
+  --secondary-color: #508dd255;
   --paper-color: rgb(255, 255, 255);
   --text-color: rgb(18, 18, 18);
-  --button-color: rgb(200, 200, 200);
-  --border-color: rgb(100, 100, 100);
+  --button-color: rgb(210, 210, 210);
+  --border-color: rgb(140, 140, 140);
 }
 
 [data-theme='dark'] {
   --primary-color: #0568da;
+  --secondary-color: #0568da55;
   --paper-color: rgb(18, 18, 18);
   --text-color: rgb(255, 255, 255);
   --button-color: rgb(120, 120, 120);
-  --border-color: rgb(60, 60, 60);
+  --border-color: rgb(80, 80, 80);
 }
 
 body {
@@ -32,10 +34,28 @@ div.main {
 
 /* 게임보드 */
 div.gameBoardContainer {
+  position: relative;
+  padding-top: 8px;
+  padding-bottom: 8px;
+
   display: flex;
   justify-content: center;
   align-items: center;
   flex-grow: 1;
+}
+
+div.definitionContainer {
+  position: absolute;
+  bottom: 0;
+  padding: 4px;
+
+  width: 372px;
+
+  word-break: keep-all;
+  font-size: 1.1em;
+
+  background-color: var(--button-color);
+  border-radius: 4px;
 }
 
 div.gameBoard {
@@ -76,7 +96,16 @@ div.gameBoardBox.emptyBox {
   background-color: var(--border-color);
 }
 
-/* 박스 왼쪽 위에 box.indexes 를 표시하는 div 생성 */
+div.gameBoardBox.selected {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+div.gameBoardBox.highlighted {
+  background-color: var(--secondary-color);
+  border-color: var(--primary-color);
+}
+
 div.gameBoardBox .boxIndex {
   position: absolute;
   top: 0;

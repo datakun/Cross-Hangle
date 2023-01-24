@@ -16,9 +16,14 @@ type Words = {
 };
 
 type Box = {
+  row: number;
+  column: number;
   correct: string;
   input: string;
+  to: 'row' | 'column' | 'all';
   indexes: number[];
+  rowWord: string;
+  columnWord: string;
 };
 
 type Crossword = {
@@ -31,6 +36,8 @@ export function GameBoard(props: BoardProps) {
   console.log('render Board');
 
   const [crossword, setCrossword] = React.useState<null | Crossword>(null);
+  const [selectedBox, setSelectedBox] = React.useState<null | Box>(null);
+  const [highlightedBoxes, setHighlightedBoxes] = React.useState<Box[]>([]);
 
   // 컴포넌트가 준비되면 문제 생성하기
   React.useEffect(() => {
@@ -61,24 +68,46 @@ export function GameBoard(props: BoardProps) {
         for (const word in todayWords) {
           const { row, col, to } = todayWords[word];
 
-          for (let x = 0; x < word.length; x++) {
-            const box: Box = {
-              correct: word[x],
-              input: '',
-              indexes: [index],
-            };
-
-            if (to === 'row') {
-              if (todayCrossword.boxes[row][col + x] === null) {
-                todayCrossword.boxes[row][col + x] = box;
+          if (to === 'row') {
+            for (let x = 0; x < word.length; x++) {
+              const oldBox = todayCrossword.boxes[row][col + x];
+              if (oldBox === null) {
+                todayCrossword.boxes[row][col + x] = {
+                  row: row,
+                  column: col + x,
+                  correct: word[x],
+                  input: '',
+                  to: to,
+                  indexes: [index],
+                  rowWord: word,
+                  columnWord: '',
+                };
               } else {
-                todayCrossword.boxes[row][col + x]?.indexes.push(index);
+                oldBox.to = 'all';
+                oldBox.indexes.push(index);
+                oldBox.indexes.sort();
+                oldBox.rowWord = word;
               }
-            } else {
-              if (todayCrossword.boxes[row + x][col] === null) {
-                todayCrossword.boxes[row + x][col] = box;
+            }
+          } else {
+            for (let x = 0; x < word.length; x++) {
+              const oldBox = todayCrossword.boxes[row + x][col];
+              if (oldBox === null) {
+                todayCrossword.boxes[row + x][col] = {
+                  row: row + x,
+                  column: col,
+                  correct: word[x],
+                  input: '',
+                  to: to,
+                  indexes: [index],
+                  rowWord: '',
+                  columnWord: word,
+                };
               } else {
-                todayCrossword.boxes[row + x][col]?.indexes.push(index);
+                oldBox.to = 'all';
+                oldBox.indexes.push(index);
+                oldBox.indexes.sort();
+                oldBox.columnWord = word;
               }
             }
           }
@@ -95,32 +124,118 @@ export function GameBoard(props: BoardProps) {
     fetchCrossword();
   }, []);
 
-  return (
-    <div className="gameBoardContainer">
-      {crossword !== null ? (
-        <div className="gameBoard">
-          {Array.from({ length: 6 }, (_, row) => (
-            <div className="gameBoardRow" key={row}>
-              {Array.from({ length: 6 }, (_, column) => {
-                const box = crossword.boxes[row][column];
-                if (box === null) {
-                  return <div className="gameBoardBox emptyBox" key={column} />;
-                }
+  const handleBoxClick = (e: React.MouseEvent, box: Box) => {
+    e.stopPropagation();
 
-                return (
-                  <div className="gameBoardBox" key={column}>
-                    {box.input}
-                    <div className="boxIndex">{box.indexes.join(',')}</div>
-                  </div>
-                );
-              })}
-            </div>
-          ))}
+    if (crossword === null) {
+      return;
+    }
+
+    const findHighlightedBox = (boxWord: string, to: 'row' | 'column') => {
+      const highlightedBoxes: Box[] = [];
+      const word = crossword.words[boxWord];
+      for (let i = 0; i < boxWord.length; i++) {
+        const otherBox = crossword.boxes[word.row + (to === 'column' ? i : 0)][word.col + (to === 'row' ? i : 0)];
+        if (otherBox) {
+          highlightedBoxes.push(otherBox);
+        }
+      }
+
+      setHighlightedBoxes(highlightedBoxes);
+    };
+
+    // highlighted box 를 찾아서 표시하기
+    if (box.to === 'row') {
+      if (Util.isEquals(selectedBox, box)) {
+        return;
+      }
+
+      findHighlightedBox(box.rowWord, 'row');
+    } else if (box.to === 'column') {
+      if (Util.isEquals(selectedBox, box)) {
+        return;
+      }
+
+      findHighlightedBox(box.columnWord, 'column');
+    } else {
+      let toFindRow = true;
+      // 이전에 선택된 박스가 있고, highlightedBoxes 의 아이템 중 to 가 row 인 박스가 있다면 toFindRow 를 false 로 바꾼다.
+      if (selectedBox !== null && Util.isEquals(selectedBox, box)) {
+        for (const highlightedBox of highlightedBoxes) {
+          if (highlightedBox.to === 'row') {
+            toFindRow = false;
+            break;
+          }
+        }
+      }
+
+      if (toFindRow === true) {
+        findHighlightedBox(box.rowWord, 'row');
+      } else {
+        findHighlightedBox(box.columnWord, 'column');
+      }
+    }
+
+    setSelectedBox(box);
+  };
+
+  const handleEmptyBoxClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (highlightedBoxes.length !== 0) {
+      setHighlightedBoxes([]);
+    }
+    if (selectedBox !== null) {
+      setSelectedBox(null);
+    }
+  };
+
+  return (
+    <div className="gameBoardContainer" onClick={(e) => handleEmptyBoxClick(e)}>
+      {crossword !== null ? (
+        <div>
+          <div className="gameBoard">
+            {Array.from({ length: 6 }, (_, row) => (
+              <div className="gameBoardRow" key={row}>
+                {Array.from({ length: 6 }, (_, column) => {
+                  const box = crossword.boxes[row][column];
+                  if (box === null) {
+                    return <div className="gameBoardBox emptyBox" key={column} onClick={(e) => handleEmptyBoxClick(e)} />;
+                  }
+
+                  let isSelected = false;
+                  if (selectedBox !== null) {
+                    if (box.row === selectedBox.row && box.column === selectedBox.column) {
+                      isSelected = true;
+                    }
+                  }
+
+                  let isHighlighted = false;
+                  if (isSelected === false) {
+                    for (const highlightedBox of highlightedBoxes) {
+                      if (box.row === highlightedBox.row && box.column === highlightedBox.column) {
+                        isHighlighted = true;
+                        break;
+                      }
+                    }
+                  }
+
+                  return (
+                    <div className={'gameBoardBox' + (isSelected ? ' selected' : '') + (isHighlighted ? ' highlighted' : '')} key={column} onClick={(e) => handleBoxClick(e, box)}>
+                      {box.input}
+                      <div className="boxIndex">{box.indexes.join(',')}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+          {/* 정의 */}
+          {highlightedBoxes.length > 0 ? <div className="definitionContainer">{crossword.words[highlightedBoxes.map((box) => box.correct).join('')].def}</div> : null}
         </div>
       ) : (
         <div>로딩 중...</div>
       )}
-      {/* 툴팁 */}
     </div>
   );
 }
