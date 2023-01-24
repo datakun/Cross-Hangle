@@ -1,4 +1,5 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
@@ -12,7 +13,7 @@ module.exports = (env, argv) => {
     entry: './src/index.tsx',
     output: {
       path: path.join(__dirname, '/dist'),
-      filename: '[name].js',
+      filename: '[name].[contenthash].js',
     },
     devServer: {
       port: 3000,
@@ -27,6 +28,11 @@ module.exports = (env, argv) => {
           test: /\.tsx?$/,
           use: ['ts-loader'],
         },
+        {
+          test: /\.css$/,
+          exclude: /node_modules/,
+          use: [!prod ? 'style-loader' : MiniCssExtractPlugin.loader, 'css-loader'],
+        },
       ],
     },
     plugins: [
@@ -35,13 +41,10 @@ module.exports = (env, argv) => {
       }),
       new HtmlWebpackPlugin({
         template: './public/index.html',
-        minify:
-          process.env.NODE_ENV === 'production'
-            ? {
-                collapseWhitespace: true, // 빈칸 제거
-                removeComments: true, // 주석 제거
-              }
-            : false,
+      }),
+      new MiniCssExtractPlugin({
+        filename: '[name].[contenthash].css',
+        chunkFilename: '[id].[contenthash].css',
       }),
       new CleanWebpackPlugin(),
     ],

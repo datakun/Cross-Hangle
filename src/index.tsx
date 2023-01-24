@@ -3,6 +3,7 @@ import { initializeApp } from 'firebase/app';
 import * as React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Main } from './component/Main';
+import './style/index.css';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBlIXJe0GjRj35qKvpJxP_2zXngSYwThqQ',
