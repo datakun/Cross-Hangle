@@ -352,21 +352,11 @@ def make_crossword(date_time):
     """
     "crosswords": {
         "2023-01-24": {
-            "crossword": [
-                ["", "", "", "", "", ""],
-                ["", "", "", "", "", ""],
-                ["", "", "", "", "", ""],
-                ["", "", "", "", "", ""],
-                ["", "", "", "", "", ""],
-                ["", "", "", "", "", ""]
-            ],
-            "words": {
-                "단어": {
-                    "row": 0,
-                    "col": 0,
-                    "to": "row",
-                    "def": "단어의 정의"
-                }
+            "단어": {
+                "row": 0,
+                "col": 0,
+                "to": "row",
+                "def": "단어의 정의"
             }
         }
     }
@@ -374,8 +364,7 @@ def make_crossword(date_time):
     with open('script/hangle.json', 'r', encoding='utf-8') as f:
         data = json.load(f)
 
-    data['crosswords'][date_time.strftime('%Y-%m-%d')] = {
-        'crossword': crossword, 'words': correct_words}
+    data['crosswords'][date_time.strftime('%Y-%m-%d')] = correct_words
 
     with open('script/hangle.json', 'w', encoding='utf-8') as f:
         print(date_time)

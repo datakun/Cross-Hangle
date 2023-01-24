@@ -12,11 +12,6 @@ export function Main() {
 
   // 게임 데이터
 
-  // 컴포넌트가 준비되면 문제 생성하기
-  React.useEffect(() => {
-    //
-  }, []);
-
   const handleStatisticsClick = React.useCallback(() => {
     setStatisticsVisible(true);
   }, []);
