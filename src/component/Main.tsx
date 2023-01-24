@@ -1,21 +1,33 @@
 import * as React from 'react';
 import { GameBoard } from './GameBoard';
-import { Header } from './Header';
-import { Keyboard } from './Keyboard';
+import Header from './Header';
+import Keyboard from './Keyboard';
 
 export function Main() {
-  const handleStatisticsClick = () => {
-    //
-  };
+  // 메인 화면
 
-  const handleSettingsClick = () => {
-    //
-  };
+  // 모달 표시 여부
+  const [visibleStatistics, setStatisticsVisible] = React.useState(false);
+  const [visibleSettings, setVisibleSettings] = React.useState(false);
 
-  const handleKeyboardClick = (key: string) => {
+  // 게임 데이터
+
+  // 컴포넌트가 준비되면 문제 생성하기
+  React.useEffect(() => {
     //
+  }, []);
+
+  const handleStatisticsClick = React.useCallback(() => {
+    setStatisticsVisible(true);
+  }, []);
+
+  const handleSettingsClick = React.useCallback(() => {
+    setVisibleSettings(true);
+  }, []);
+
+  const handleKeyboardClick = React.useCallback((key: string) => {
     console.log(key);
-  };
+  }, []);
 
   return (
     <div className="main">

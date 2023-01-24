@@ -7,7 +7,7 @@ type HeaderProps = {
   onSettingsClick?: () => void;
 } & React.ComponentProps<'div'>;
 
-export function Header(props: HeaderProps) {
+function Header(props: HeaderProps) {
   // 도움말 버튼 / 타이틀 / 통계 버튽 / 옵션 버튼
   console.log('render Header');
 
@@ -25,3 +25,5 @@ export function Header(props: HeaderProps) {
     </div>
   );
 }
+
+export default React.memo(Header);

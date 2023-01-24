@@ -4,7 +4,7 @@ type KeyboardProps = {
   onKeyboardClick?: (key: string) => void;
 } & React.ComponentProps<'div'>;
 
-export function Keyboard(props: KeyboardProps) {
+function Keyboard(props: KeyboardProps) {
   // 키보드 버튼
   console.log('render Keyboard');
 
@@ -131,3 +131,5 @@ export function Keyboard(props: KeyboardProps) {
     </div>
   );
 }
+
+export default React.memo(Keyboard);
