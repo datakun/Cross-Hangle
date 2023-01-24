@@ -1,8 +1,9 @@
 import json
 import os
 import random
+import datetime
 
-EMPTY_STR = '  '
+EMPTY_STR = ''
 MIN_WORD_LEN = 3
 MAX_WORD_LEN = 6
 
@@ -152,33 +153,6 @@ def find_column_word(word, start_row, start_col, crossword, dict):
     char_index = random.choice(available_word_index)
     char = word[char_index]
     new_start_col = start_col + char_index
-    # start_row, new_col 을 기준으로 (-1, -1), (-1, 1), (1, -1), (1, 1) 의 4가지 방향이 빈칸인지 확인한다.
-    while (True):
-        is_available = True
-        if char_index in available_word_index:
-            available_word_index.remove(char_index)
-
-        for i in range(-1, 2, 2):
-            if start_row + i < 0 or start_row + i >= MAX_WORD_LEN:
-                continue
-
-            for j in range(-1, 2, 2):
-                if new_start_col + j < 0 or new_start_col + j >= MAX_WORD_LEN:
-                    continue
-
-                if crossword[start_row + i][new_start_col + j] != EMPTY_STR:
-                    is_available = False
-                    break
-
-            if is_available == False:
-                break
-
-        if is_available == True or len(available_word_index) == 0:
-            break
-
-        char_index = random.choice(available_word_index)
-        char = word[char_index]
-        new_start_col = start_col + char_index
 
     if len(available_word_index) == 0:
         return None, None, None
@@ -241,33 +215,6 @@ def find_row_word(word, start_row, start_col, crossword, dict):
     char_index = random.choice(available_word_index)
     char = word[char_index]
     new_start_row = start_row + char_index
-    # new_row, start_col 을 기준으로 (-1, -1), (-1, 1), (1, -1), (1, 1) 의 4가지 방향이 빈칸인지 확인한다.
-    while (True):
-        is_available = True
-        if char_index in available_word_index:
-            available_word_index.remove(char_index)
-
-        for i in range(-1, 2, 2):
-            if new_start_row + i < 0 or new_start_row + i >= MAX_WORD_LEN:
-                continue
-
-            for j in range(-1, 2, 2):
-                if start_col + j < 0 or start_col + j >= MAX_WORD_LEN:
-                    continue
-
-                if crossword[new_start_row + i][start_col + j] != EMPTY_STR:
-                    is_available = False
-                    break
-
-            if is_available == False:
-                break
-
-        if is_available == True or len(available_word_index) == 0:
-            break
-
-        char_index = random.choice(available_word_index)
-        char = word[char_index]
-        new_start_row = start_row + char_index
 
     if len(available_word_index) == 0:
         return None, None, None
@@ -323,7 +270,7 @@ def find_row_word(word, start_row, start_col, crossword, dict):
         return new_word, new_start_row, new_start_col
 
 
-def make_crossword():
+def make_crossword(date_time):
     # words.json 파일을 읽어서 가로 6칸, 세로 6칸 크리의 크로스워드를 만든다.
     # 크로스워드의 단어는 3~6 글자로 구성된 단어이다.
     # 크로스워드의 단어는 words 배열에 있는 단어이다.
@@ -395,18 +342,53 @@ def make_crossword():
             correct_words[word] = {'row': row, 'col': col,
                                    'to': 'row', 'def': dict[word]}
 
-    for i in range(len(crossword)):
-        print(crossword[i])
+    # for i in range(len(crossword)):
+    #     print(crossword[i])
 
-    for key, value in correct_words.items():
-        print(key, value)
+    # for key, value in correct_words.items():
+    #     print(key, value)
+
+    # hangle.json 파일에 결과를 저장한다.
+    """
+    "crosswords": {
+        "2023-01-24": {
+            "crossword": [
+                ["", "", "", "", "", ""],
+                ["", "", "", "", "", ""],
+                ["", "", "", "", "", ""],
+                ["", "", "", "", "", ""],
+                ["", "", "", "", "", ""],
+                ["", "", "", "", "", ""]
+            ],
+            "words": {
+                "단어": {
+                    "row": 0,
+                    "col": 0,
+                    "to": "row",
+                    "def": "단어의 정의"
+                }
+            }
+        }
+    }
+    """
+    with open('script/hangle.json', 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    data['crosswords'][date_time.strftime('%Y-%m-%d')] = {
+        'crossword': crossword, 'words': correct_words}
+
+    with open('script/hangle.json', 'w', encoding='utf-8') as f:
+        print(date_time)
+        json.dump(data, f, ensure_ascii=False, indent=4)
 
 
 def main():
     # 한국어기초사전_추출()
 
-    for i in range(1):
-        make_crossword()
+    start_date = datetime.date(2023, 1, 24)
+    for i in range(1000):
+        date_time = start_date + datetime.timedelta(days=i)
+        make_crossword(date_time)
 
 
 if __name__ == '__main__':
